@@ -29,7 +29,7 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['post'])
     def login(self, request):
-        user = authenticate(email=(request.data.get('email')), password=(request.data.get('password')))
+        user = authenticate(username=(request.data.get('username')), password=(request.data.get('password')))
 
         if user:
             return Response({'access_token': (self.get_access_token(user))}, status=status.HTTP_200_OK)
