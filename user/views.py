@@ -17,7 +17,7 @@ class UserViewSet(viewsets.ModelViewSet):
         user = serializer.save()
 
         # jwt 토큰
-        access_token = 'test' # str(RefreshToken.for_user(user).access_token)
+        access_token = str(RefreshToken.for_user(user).access_token)
 
         return Response({'access_token': access_token, **serializer.data}, status=status.HTTP_201_CREATED,
                         headers=(self.get_success_headers(serializer.data)))
