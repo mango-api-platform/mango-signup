@@ -14,15 +14,17 @@ class UserViewSet(viewsets.ModelViewSet):
     # TODO: 퍼미션 관련 구현
     # permission_classes = [permissions.IsAuthenticated]
 
+    def get_access_token(self, user):
+        # jwt 토큰 생성
+        return str(RefreshToken.for_user(user).access_token)
+
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        # jwt 토큰
-        access_token = str(RefreshToken.for_user(user).access_token)
-
-        return Response({'access_token': access_token, **serializer.data}, status=status.HTTP_201_CREATED,
+        return Response({'access_token': (self.get_access_token(user)), **serializer.data},
+                        status=status.HTTP_201_CREATED,
                         headers=(self.get_success_headers(serializer.data)))
 
     @action(detail=False, methods=['post'])
@@ -30,7 +32,6 @@ class UserViewSet(viewsets.ModelViewSet):
         user = authenticate(email=(request.data.get('email')), password=(request.data.get('password')))
 
         if user:
-            access_token = str(RefreshToken.for_user(user).access_token)
-            return Response({'access_token': access_token}, status=status.HTTP_200_OK)
+            return Response({'access_token': (self.get_access_token(user))}, status=status.HTTP_200_OK)
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
