@@ -23,15 +23,18 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
 
-        return Response({'access_token': (self.get_access_token(user)), **serializer.data},
-                        status=status.HTTP_201_CREATED,
-                        headers=(self.get_success_headers(serializer.data)))
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers={
+            'Authorization': f'Bearer {self.get_access_token(user)}',
+            **self.get_success_headers(serializer.data)
+        })
 
     @action(detail=False, methods=['post'])
     def login(self, request):
         user = authenticate(username=(request.data.get('username')), password=(request.data.get('password')))
 
         if user:
-            return Response({'access_token': (self.get_access_token(user))}, status=status.HTTP_200_OK)
+            return Response({}, status=status.HTTP_200_OK, headers={
+                'Authorization': f'Bearer {self.get_access_token(user)}'
+            })
         else:
             return Response({"error": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
