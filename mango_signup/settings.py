@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'drf_yasg',
+    'drf_spectacular',
     'user',
 ]
 
@@ -56,7 +57,8 @@ ROOT_URLCONF = 'mango_signup.urls'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    ],
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 TEMPLATES = [
@@ -144,4 +146,12 @@ SIMPLE_JWT = {
     'USER_ID_CLAIM': 'user_id',
     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
     'TOKEN_TYPE_CLAIM': 'token_type',
+}
+
+
+SPECTACULAR_SETTINGS = {
+    'ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE': False,
+    'COMPONENT_SPLIT_PATCH': False,
+    'ENUM_NAME_OVERRIDES': {
+    }
 }
